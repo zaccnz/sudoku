@@ -1,0 +1,1 @@
+(function(){"use strict";onmessage=e=>{console.log("hello"),setTimeout(()=>{console.log("Message received from main script");const s=`Result: ${e.data[0]*e.data[1]}`;console.log("Posting message back to main script"),postMessage(s)},1e3)}})();

@@ -1,0 +1,9 @@
+.tile-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5vmin;
+    border: 1px solid grey;
+    background: var(--background);
+    cursor: pointer;
+}

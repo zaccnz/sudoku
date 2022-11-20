@@ -26,8 +26,11 @@
     },
     "plugins": [
       {
-        "name": "typescript-plugin-css-modules"
-      }
+        "name": "typescript-plugin-css-modules",
+        "options": {
+          "classnameTransform": "camelCaseOnly",
+        }
+      },
     ]
   },
   "include": [

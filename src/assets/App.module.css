@@ -1,0 +1,10 @@
+.game-container {
+    display: block;
+    height: 100%;
+    width: 100%;
+    grid-template-rows: 3fr 0fr 0fr;
+    grid-template-areas:
+        "controls"
+        "game"
+        "numbers";
+}

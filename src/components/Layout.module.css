@@ -1,24 +1,119 @@
 .container {
     width: 100%;
-    height: 100%;
+    min-height: 100%;
     font-family: Arial, Helvetica, sans-serif;
     display: flex;
     flex-direction: column;
 }
 
 .header {
-    width: 100%;
+    padding: 0.5em 0em;
 }
 
 .header-text {
+    margin: 0.5em 0;
     font-weight: 100;
+    font-size: 3em;
+    display: flex;
+    gap: 0.1em;
+    user-select: none;
+    overflow: visible;
+}
+
+.header-link-active {
+    color: #fff;
+    text-decoration: none;
+    pointer-events: none;
+}
+
+.header-link-inactive {
+    color: #ccc;
+    text-decoration: none;
+    overflow-y: visible;
+}
+
+@keyframes animateIn {
+    0% {
+        max-width: 0%;
+    }
+
+    20% {
+        max-width: 0%;
+    }
+
+    100% {
+        max-width: 100%;
+    }
+}
+
+.header-link-animate {
+    animation-name: animateIn;
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+    overflow-x: clip;
+    overflow-y: visible;
+    display: inline-block;
+    height: 100%;
+}
+
+.header-link-active:hover {
+    text-decoration: none;
+    color: #fff;
+}
+
+.header-link-inactive:hover {
+    text-decoration: underline;
+    color: #bbbbf8;
 }
 
 .main {
-    width: 100%;
     flex-grow: 1;
+    display: block;
+    padding: 2em;
 }
 
 .footer {
-    width: 100%;
+    padding: 2em;
+    display: flex;
+    justify-content: space-between;
+    color: #fff;
+    user-select: none;
+}
+
+@media(min-width:768px) {
+    .header-text {
+        font-weight: 100;
+        font-size: 4em;
+    }
+}
+
+@media(min-width:1024px) {
+    .header-text {
+        font-weight: 100;
+        font-size: 6em;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    .footer {
+        color: #000;
+    }
+
+    .header-link-active {
+        color: #000;
+    }
+
+    .header-link-inactive {
+        color: #777;
+    }
+
+    .header-link-inactive:hover {
+        text-decoration: underline;
+        color: rgb(13, 13, 110);
+    }
+
+    .header-link-active:hover {
+        text-decoration: none;
+        color: #000;
+    }
 }

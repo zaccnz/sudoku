@@ -21,13 +21,13 @@
 }
 
 .header-link-active {
-    color: #fff;
+    color: var(--header-active);
     text-decoration: none;
     pointer-events: none;
 }
 
 .header-link-inactive {
-    color: #ccc;
+    color: var(--header-inactive);
     text-decoration: none;
     overflow-y: visible;
 }
@@ -58,25 +58,32 @@
 
 .header-link-active:hover {
     text-decoration: none;
-    color: #fff;
+    color: var(--header-active);
 }
 
 .header-link-inactive:hover {
     text-decoration: underline;
-    color: #bbbbf8;
+    color: var(--header-inactive-hover);
 }
 
 .main {
     flex-grow: 1;
-    display: block;
-    padding: 2em;
+    display: grid;
+    grid-template-areas:
+        "controls"
+        "board"
+        "numbers";
+    grid-template-rows: 8vh min(90vw, 60vh) 6vh;
+    grid-template-columns: min(90vw, 60vh);
+    margin: 0 auto;
+    padding: 0.5em;
 }
 
 .footer {
     padding: 2em;
     display: flex;
     justify-content: space-between;
-    color: #fff;
+    color: var(--font-color);
     user-select: none;
 }
 
@@ -88,32 +95,16 @@
 }
 
 @media(min-width:1024px) {
+    .main {
+        grid-template-areas:
+            "board controls"
+            "board numbers";
+        grid-template-rows: 1fr 2fr;
+        grid-template-columns: 3fr 1fr;
+    }
+
     .header-text {
         font-weight: 100;
         font-size: 6em;
-    }
-}
-
-@media (prefers-color-scheme: light) {
-    .footer {
-        color: #000;
-    }
-
-    .header-link-active {
-        color: #000;
-    }
-
-    .header-link-inactive {
-        color: #777;
-    }
-
-    .header-link-inactive:hover {
-        text-decoration: underline;
-        color: rgb(13, 13, 110);
-    }
-
-    .header-link-active:hover {
-        text-decoration: none;
-        color: #000;
     }
 }

@@ -7,10 +7,11 @@ import { Error } from './modal/Error';
 
 interface Props {
     page: 'index' | 'solver',
+    boardString?: string,
     children: (values: { error: string, setError: Dispatch<SetStateAction<string>> }) => React.ReactElement,
 }
 
-export const Layout: React.FC<Props> = ({ page, children }) => {
+export const Layout: React.FC<Props> = ({ page, boardString, children }) => {
     const [settingsOpen, setSettingsOpen] = useState(false);
     const [aboutOpen, setAboutOpen] = useState(false);
     const [error, setError] = useState('');
@@ -29,7 +30,7 @@ export const Layout: React.FC<Props> = ({ page, children }) => {
                         </span>
                     </a>
                     <a
-                        href={`${import.meta.env.BASE_URL}solver/`}
+                        href={`${import.meta.env.BASE_URL}solver/${boardString !== undefined ? `?board=${boardString}` : ''}`}
                         style={{ flex: '1 1 0px' }}
                         className={page === 'solver' ? headerLinkActive : headerLinkInactive}
                     >

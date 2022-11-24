@@ -1,9 +1,8 @@
 .grid-container {
-    width: auto;
     aspect-ratio: 1;
-    max-height: 60vh;
+    grid-area: board;
 
-    border: 4px solid black;
+    border: 4px solid var(--border-colour);
     margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -15,7 +14,7 @@
 .grid-box {
     grid-column-start: calc(var(--x)+1);
     grid-row-start: calc(var(--y) +1);
-    border: 1px solid black;
+    border: 1px solid var(--border-colour);
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);

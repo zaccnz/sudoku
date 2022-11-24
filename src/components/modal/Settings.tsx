@@ -14,6 +14,8 @@ export const Settings: React.FC<SettingsProps> = ({ setSettingsOpen }) => {
     const systemThemeCheckbox = useRef<HTMLInputElement>(null);
     const darkThemeCheckbox = useRef<HTMLInputElement>(null);
     const confettiCheckbox = useRef<HTMLInputElement>(null);
+    const highlightConnectedCheckbox = useRef<HTMLInputElement>(null);
+    const highlightInvalidCheckbox = useRef<HTMLInputElement>(null);
 
     const [forwardDelay, setForwardDelay] = useState(0);
     const [forwardDelayError, setForwardDelayError] = useState('');
@@ -37,6 +39,8 @@ export const Settings: React.FC<SettingsProps> = ({ setSettingsOpen }) => {
             systemThemeCheckbox.current && (nextState.useSystemTheme = systemThemeCheckbox.current.checked);
             darkThemeCheckbox.current && (nextState.darkTheme = darkThemeCheckbox.current.checked);
             confettiCheckbox.current && (nextState.confetti = confettiCheckbox.current.checked);
+            highlightConnectedCheckbox.current && (nextState.highlightConnected = highlightConnectedCheckbox.current.checked);
+            highlightInvalidCheckbox.current && (nextState.highlightInvalid = highlightInvalidCheckbox.current.checked);
 
             return nextState;
         });
@@ -114,6 +118,24 @@ export const Settings: React.FC<SettingsProps> = ({ setSettingsOpen }) => {
                         type='checkbox'
                         ref={confettiCheckbox}
                         checked={settings.confetti}
+                        onChange={() => updateSettings()}
+                    />
+                </div>
+                <div className={settingsRow}>
+                    <p className={settingsText}>highlight connected tiles</p>
+                    <input
+                        type='checkbox'
+                        ref={highlightConnectedCheckbox}
+                        checked={settings.highlightConnected}
+                        onChange={() => updateSettings()}
+                    />
+                </div>
+                <div className={settingsRow}>
+                    <p className={settingsText}>highlight invalid tiles</p>
+                    <input
+                        type='checkbox'
+                        ref={highlightInvalidCheckbox}
+                        checked={settings.highlightInvalid}
                         onChange={() => updateSettings()}
                     />
                 </div>

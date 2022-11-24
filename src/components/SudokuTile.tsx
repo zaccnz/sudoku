@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Highlight, SudokuTile as Tile } from '@/game/sudoku';
 
 /* @ts-ignore */
 import { tileContainer, tileNoteContainer } from './SudokuTile.module.css';
+import { Settings, SettingsContext } from '@/providers/SettingsProvider';
 
 interface TileProps {
     tile: Tile;
@@ -10,33 +11,49 @@ interface TileProps {
     highlight?: Highlight;
 }
 
-const highlightColors: Record<Highlight | 'none' | 'invalid' | 'invalid-selected', string> = {
-    'none': '#fff',
-    'selected': '#73a4fa',
-    'connected': '#aac7fa',
-    'same': '#92b6f7',
-    'invalid': '#fa9393',
-    'invalid-selected': '#f77474'
+const highlightColors: Record<'light' | 'dark', Record<Highlight | 'none' | 'invalid' | 'invalid-selected', string>> = {
+    'light': {
+        'none': '#fff',
+        'selected': '#73a4fa',
+        'connected': '#aac7fa',
+        'same': '#92b6f7',
+        'invalid': '#fa9393',
+        'invalid-selected': '#f77474'
+    },
+    'dark': {
+        'none': '#000',
+        'selected': '#73a4fa',
+        'connected': '#aac7fa',
+        'same': '#92b6f7',
+        'invalid': '#fa9393',
+        'invalid-selected': '#f77474'
+    },
 }
 
-const getHighlight = (valid: boolean, highlight?: Highlight): string => {
-    if (valid) {
-        return highlightColors[highlight ?? 'none'];
-    } else {
+const getHighlight = (settings: Settings, valid: boolean, highlight?: Highlight): string => {
+    const theme = settings.isDarkTheme ? 'dark' : 'light';
+    if (!valid && settings.highlightInvalid) {
         return highlight === 'selected' ?
-            highlightColors['invalid-selected'] : highlightColors['invalid'];
+            highlightColors[theme]['invalid-selected'] : highlightColors[theme]['invalid'];
+    } else {
+        if (highlight === 'connected' && !settings.highlightConnected) {
+            return highlightColors[theme]['none'];
+        }
+        return highlightColors[theme][highlight ?? 'none'];
     }
 }
 
 export const SudokuTile: React.FC<TileProps> = ({ tile, onSelected, highlight }) => {
+    const settings = useContext(SettingsContext);
+
     return (
         <div
             className={tileContainer}
             style={{
                 gridRow: (tile.row % 3) + 1,
                 gridColumn: (tile.col % 3) + 1,
-                '--background': getHighlight(tile.valid, highlight),
-                color: tile.solid ? '#000' : '#228',
+                '--background': getHighlight(settings, tile.valid, highlight),
+                color: tile.solid ? (settings.isDarkTheme ? '#fff' : '#000') : '#228',
             } as React.CSSProperties}
             onClick={() => onSelected()}
         >

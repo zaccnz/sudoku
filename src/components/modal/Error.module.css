@@ -5,9 +5,9 @@
     transform: translateX(-50%);
     width: 400px;
     max-width: 85%;
-    border: 2px solid #000;
+    border: 2px solid var(--border-colour);
     padding: 10px;
-    background: #fff;
+    background: var(--bg-color);
 }
 
 .error-title {

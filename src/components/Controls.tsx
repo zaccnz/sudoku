@@ -5,7 +5,7 @@ import { boardFromString, boardToString, WorkerInput, WorkerResult } from '@/gam
 import SolveWorker from '@/game/worker?worker';
 
 /* @ts-ignore */
-import { controlsContainer, gameStateContainer, gameControlsContainer } from './Controls.module.css';
+import { controlsContainer, gameStateContainer, gameControlsContainer, gameGeneratorText } from './Controls.module.css';
 
 const randomInterval = (from: number, to: number): number => {
     return Math.floor(Math.random() * (to - from + 1) + from);
@@ -171,7 +171,7 @@ export const Controls: React.FC<ControlsProps> = ({ sudoku, page, dispatch, sele
     return (
         <div className={controlsContainer}>
             <div className={gameStateContainer}>
-                <p>
+                <p className={gameGeneratorText}>
                     New Game
                 </p>
                 <select
@@ -217,9 +217,6 @@ export const Controls: React.FC<ControlsProps> = ({ sudoku, page, dispatch, sele
                         </button>)
                     })
                 }
-                <p>
-                    Timer here?
-                </p>
             </div>
         </div>
     );

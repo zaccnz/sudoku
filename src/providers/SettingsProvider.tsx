@@ -5,6 +5,8 @@ export interface Settings {
     darkTheme: boolean;
     useSystemTheme: boolean;
     confetti: boolean;
+    highlightConnected: boolean;
+    highlightInvalid: boolean;
     forwardDelay: number,
     backDelay: number,
 
@@ -17,6 +19,8 @@ const InitialSettings: Settings = {
     darkTheme: false,
     useSystemTheme: true,
     confetti: true,
+    highlightConnected: true,
+    highlightInvalid: true,
     forwardDelay: 100,
     backDelay: 50,
     isDarkTheme: false,
@@ -41,6 +45,8 @@ const findExistingSettings = (): Settings => {
     loadBoolean(settings, 'darkTheme');
     loadBoolean(settings, 'useSystemTheme');
     loadBoolean(settings, 'confetti');
+    loadBoolean(settings, 'highlightConnected');
+    loadBoolean(settings, 'highlightInvalid');
     loadInt(settings, 'forwardDelay');
     loadInt(settings, 'backDelay');
 
@@ -56,8 +62,10 @@ const saveSettings = (settings: Settings) => {
     localStorage.setItem(`sudoku.darkTheme`, `${settings.darkTheme}`);
     localStorage.setItem(`sudoku.useSystemTheme`, `${settings.useSystemTheme}`);
     localStorage.setItem(`sudoku.confetti`, `${settings.confetti}`);
+    localStorage.setItem(`sudoku.highlightConnected`, `${settings.highlightConnected}`);
+    localStorage.setItem(`sudoku.highlightInvalid`, `${settings.highlightInvalid}`);
     localStorage.setItem(`sudoku.forwardDelay`, `${settings.forwardDelay}`);
-    localStorage.setItem(`sudoku.forwardDelay`, `${settings.forwardDelay}`);
+    localStorage.setItem(`sudoku.backDelay`, `${settings.backDelay}`);
     return;
 };
 
@@ -105,6 +113,14 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = (props) => {
                 });
         }
     }, [settings.darkTheme, settings.useSystemTheme, systemDarkMode]);
+
+    useEffect(() => {
+        if (settings.isDarkTheme) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+        }
+    }, [settings.isDarkTheme]);
 
     useEffect(() => {
         saveSettings(settings);

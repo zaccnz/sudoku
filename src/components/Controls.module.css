@@ -1,15 +1,25 @@
 .controls-container {
-    border-radius: 5px;
-    margin: 5px;
-    padding: 20px;
-    background: aqua;
+    display: block;
+    grid-area: controls;
 }
 
 .game-state-container {
     display: flex;
+    gap: 4px;
+    align-content: center;
+}
+
+.game-generator-text {
+    margin: 0px;
 }
 
 .game-controls-container {
     display: flex;
     justify-content: space-evenly;
+}
+
+@media(min-width:1024px) {
+    .controls-container {
+        align-self: flex-end;
+    }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 
 /* @ts-ignore */
-import { aboutBackdrop, aboutClose, aboutContainer, aboutHeader, aboutRow, aboutText, aboutTitle } from './About.module.css';
+import { aboutBackdrop, aboutClose, aboutContainer, aboutHeader, aboutRow, aboutSpan, aboutText, aboutTitle } from './About.module.css';
 
 interface AboutProps {
     setAboutOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,16 +27,12 @@ export const About: React.FC<AboutProps> = ({ setAboutOpen }) => {
                     difficulty
                 </h3>
                 <div className={aboutRow}>
-                    <p className={aboutText}>easy: 10-19 missing tiles.</p>
-                </div>
-                <div className={aboutRow}>
-                    <p className={aboutText}>medium: 20-29 missing tiles.</p>
-                </div>
-                <div className={aboutRow}>
-                    <p className={aboutText}>hard: 30-39 missing tiles.</p>
-                </div>
-                <div className={aboutRow}>
-                    <p className={aboutText}>harder: 40-58 missing tiles.</p>
+                    <p className={aboutText}>
+                        <span className={aboutSpan}>easy: 10-19 missing tiles.</span>
+                        <span className={aboutSpan}>medium: 20-29 missing tiles.</span>
+                        <span className={aboutSpan}>hard: 30-39 missing tiles.</span>
+                        <span className={aboutSpan}>harder: 40-58 missing tiles.</span>
+                    </p>
                 </div>
                 <h3 className={aboutHeader}>
                     controls

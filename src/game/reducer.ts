@@ -1,78 +1,142 @@
-import { createSudoku, Difficulty, ijToBox, Sudoku, validateSudoku } from '@/game/sudoku';
-import React, { createContext } from 'react';
+import { cloneSudoku, createSudoku, Difficulty, findRemaining, Move, Sudoku, validateSudoku } from '@/game/sudoku';
 
 export type SudokuAction = {
-    type: 'createNew', difficulty: Difficulty,
+    type: 'createNew', numbers?: (number | undefined)[][],
 } | {
-    type: 'selectTile', row: number, col: number,
+    type: 'setNumber', row: number, col: number, number?: number,
 } | {
-    type: 'setNumber', number?: number,
+    type: 'setNote', row: number, col: number, note: number,
 } | {
-    type: 'deselect'
+    type: 'setPossibilities', possibilities: number[][],
+} | {
+    type: 'solidify',
+} | {
+    type: 'undo',
+} | {
+    type: 'redo',
+} | {
+    type: 'startTimer',
 };
 
+const buildPossibilityLookup = (): Record<number, number[]> => {
+    const lookup: Record<number, number[]> = {};
+
+    for (let i = 0; i < 512; i++) {
+        lookup[i] = [];
+        for (let j = 0; j < 9; j++) {
+            if ((i & (1 << j)) > 0) {
+                lookup[i].push(j + 1);
+            }
+        }
+    }
+
+    return lookup;
+};
+
+const possibilityLookup: Record<number, number[]> = buildPossibilityLookup();
+
 export const sudokuReducer = (state: Sudoku, action: SudokuAction): Sudoku => {
+    const prepareState = (state: Sudoku) => {
+        state.remaining = findRemaining(state.grid);
+        return validateSudoku(state);
+    }
+
+    const pushMove = (state: Sudoku, move: Move) => {
+        if (state.moveIndex !== state.moves.length) {
+            state.moves = state.moves.slice(0, state.moveIndex);
+        }
+        state.moves.push(move);
+        state.moveIndex++;
+    }
+
+    const toggleNote = (state: Sudoku, i: number, j: number, note: number) => {
+        if (state.grid[i][j].notes.includes(note)) {
+            state.grid[i][j].notes = state.grid[i][j].notes.filter(v => v !== note);
+        } else {
+            state.grid[i][j].notes.push(note);
+        }
+    };
+
     switch (action.type) {
         case 'createNew': {
-            return createSudoku(action.difficulty);
+            return createSudoku(action.numbers);
         }
-        case 'selectTile': {
-            const { row, col } = action;
-            const box = ijToBox(row, col);
-
-            state = {
-                ...state,
-                selected: [row, col]
-            };
-
-            const selectedNumber = state.grid[row][col].number;
-
-            state.grid.map(r => {
-                r.map(tile => {
-                    if (tile.row === row && tile.col === col) {
-                        tile.highlight = 'selected';
-                    } else if (tile.number && tile.number === selectedNumber) {
-                        tile.highlight = 'same';
-                    } else if (tile.row === row || tile.col === col) {
-                        tile.highlight = 'connected';
-                    } else if (box === ijToBox(tile.row, tile.col)) {
-                        tile.highlight = 'connected';
-                    } else {
-                        tile.highlight = undefined;
-                    }
-                })
+        case 'solidify': {
+            state = cloneSudoku(state);
+            state.grid.map(row => {
+                row.map(tile => {
+                    tile.solid = tile.number !== undefined;
+                });
             });
-            return validateSudoku(state);
-        }
-        case 'deselect': {
-            state = {
-                ...state,
-                selected: undefined,
-            };
-
-            state.grid.map(r => {
-                r.map(tile => {
-                    tile.highlight = undefined;
-                })
-            });
-            return state;
+            return prepareState(state);
         }
         case 'setNumber': {
-            state = {
-                ...state
-            };
-            if (state.selected) {
-                const [row, col] = state.selected;
-                const tile = state.grid[row][col];
-                if (!tile.solid) {
-                    tile.number = action.number;
+            state = cloneSudoku(state);
+            const { row, col } = action;
+            const tile = state.grid[row][col];
+            if (!tile.solid) {
+                pushMove(state, [row, col, 'value', tile.number, action.number]);
+
+                tile.number = action.number;
+            }
+            return prepareState(state);
+        }
+        case 'setNote': {
+            state = cloneSudoku(state);
+            const { row: i, col: j, note: number } = action;
+            if (!state.grid[i][j].solid && state.grid[i][j].number === undefined) {
+                pushMove(state, [i, j, 'note', number, number]);
+                toggleNote(state, i, j, number);
+            }
+            return state;
+        }
+        case 'setPossibilities': {
+            state = cloneSudoku(state);
+            for (let i = 0; i < 9; i++) {
+                for (let j = 0; j < 9; j++) {
+                    const possible = possibilityLookup[action.possibilities[i][j]];
+                    state.grid[i][j].notes = [...possible];
                 }
             }
-            return validateSudoku(state);
+            return state;
         }
-    }
+        case 'undo': {
+            if (state.moveIndex > 0) {
+                state = cloneSudoku(state);
+                const [row, col, type, from, _] = state.moves[state.moveIndex - 1];
+                switch (type) {
+                    case 'value': {
+                        state.grid[row][col].number = from;
+                        break;
+                    }
+                    case 'note': {
+                        toggleNote(state, row, col, from ?? 1);
+                    }
+                }
+                state.moveIndex--;
+                return prepareState(state);
+            }
+            return state;
+        }
+        case 'redo': {
+            if (state.moveIndex < state.moves.length) {
+                state = cloneSudoku(state);
+                const [row, col, type, _, to] = state.moves[state.moveIndex];
+                switch (type) {
+                    case 'value': {
+                        state.grid[row][col].number = to;
+                        break;
+                    }
+                    case 'note': {
+                        toggleNote(state, row, col, to ?? 1);
+                    }
+                }
+                state.moveIndex++;
+                return prepareState(state);
+            }
+            return state;
+        }
+    };
 
-    return {
-        ...state,
-    }
+    throw new Error(`unimplemented action ${JSON.stringify(action)}!`)
 };

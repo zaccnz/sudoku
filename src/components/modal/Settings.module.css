@@ -31,6 +31,11 @@
     padding-bottom: 15px;
 }
 
+.settings-header {
+    margin: 10px 0px 0px 0px;
+    padding: 0px;
+}
+
 .settings-text {
     font-size: 1.2em;
     margin: 5px 0;
@@ -41,4 +46,9 @@
     cursor: pointer;
     margin: 0;
     align-self: flex-start;
+    padding: 10px;
+}
+
+.settings-error {
+    color: red;
 }

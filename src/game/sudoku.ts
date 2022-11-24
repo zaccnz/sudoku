@@ -13,41 +13,90 @@ export const boxToIJ = (box: number, index: number): [number, number] => {
 
 export type Highlight = 'selected' | 'same' | 'connected';
 
-export type Difficulty = 'easy' | 'medium' | 'hard' | 'impossible';
+export type Difficulty = 'easy' | 'medium' | 'hard' | 'harder';
 
 export interface SudokuTile {
     number?: number;
     row: number;
     col: number;
     valid: boolean;
-    highlight?: Highlight;
-    notes: Record<number, boolean>;
+    notes: number[];
     solid: boolean;
 }
+
+export type Move = [
+    row: number, col: number,
+    changed: 'value' | 'note',
+    from: number | undefined,
+    to: number | undefined
+];
 
 export interface Sudoku {
     grid: SudokuTile[][];
     valid: boolean;
     complete: boolean;
-    selected?: [number, number];
+    moves: Move[];
+    moveIndex: number;
+    remaining: number[];
+    started: Date,
 }
 
-export const createSudoku = (difficulty?: Difficulty): Sudoku => {
+export const cloneTile = (tile: SudokuTile): SudokuTile => {
     return {
-        grid: new Array(9).fill(0).map((_, i) => {
-            return new Array(9).fill(0).map((_, j) => {
-                return {
-                    number: i === j && i != 4 ? i + 1 : undefined,
-                    row: i,
-                    col: j,
-                    valid: true,
-                    notes: {},
-                    solid: i === j,
-                } as SudokuTile;
-            })
-        }),
+        ...tile,
+        notes: [...tile.notes],
+    };
+}
+
+export const cloneSudoku = (sudoku: Sudoku): Sudoku => {
+    const newGrid = sudoku.grid.map(row => row.map(tile => cloneTile(tile)));
+    return {
+        ...sudoku,
+        grid: newGrid,
+        moves: [...sudoku.moves],
+        remaining: [...sudoku.remaining],
+    };
+}
+
+export const findRemaining = (grid: SudokuTile[][]): number[] => {
+    const nCount: Record<number, number> = {};
+    for (const row of grid) {
+        for (const tile of row) {
+            if (tile.number) {
+                if (tile.number in nCount) {
+                    nCount[tile.number] += 1;
+                } else {
+                    nCount[tile.number] = 1;
+                }
+            }
+        }
+    }
+
+    return new Array(9).fill(0).map((_, i) => i + 1).filter(v => !nCount[v] || nCount[v] !== 9);
+};
+
+export const createSudoku = (numbers?: (number | undefined)[][]): Sudoku => {
+    const grid = new Array(9).fill(0).map((_, i) => {
+        return new Array(9).fill(0).map((_, j) => {
+            return {
+                number: numbers !== undefined ? numbers[i][j] : undefined,
+                row: i,
+                col: j,
+                valid: true,
+                notes: [],
+                solid: numbers !== undefined && numbers[i][j] !== undefined,
+            } as SudokuTile;
+        })
+    });
+
+    return {
+        grid,
         valid: true,
         complete: false,
+        moves: [],
+        moveIndex: 0,
+        remaining: findRemaining(grid),
+        started: new Date(),
     }
 };
 
@@ -72,8 +121,8 @@ export const validateSudoku = (sudoku: Sudoku): Sudoku => {
                 if (rowSeen.includes(row)) {
                     if (i in invalidRow) {
                         invalidRow[i].push(row);
-                        isValid = false;
                     } else {
+                        isValid = false;
                         invalidRow[i] = [row];
                     }
                 } else {
@@ -87,8 +136,8 @@ export const validateSudoku = (sudoku: Sudoku): Sudoku => {
                 if (colSeen.includes(col)) {
                     if (i in invalidCol) {
                         invalidCol[i].push(col);
-                        isValid = false;
                     } else {
+                        isValid = false;
                         invalidCol[i] = [col];
                     }
                 } else {
@@ -101,8 +150,8 @@ export const validateSudoku = (sudoku: Sudoku): Sudoku => {
                 if (boxSeen.includes(box)) {
                     if (i in invalidBox) {
                         invalidBox[i].push(box);
-                        isValid = false;
                     } else {
+                        isValid = false;
                         invalidBox[i] = [box];
                     }
                 } else {

@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Highlight, SudokuTile as Tile } from '@/game/sudoku';
 
 /* @ts-ignore */
-import { tileContainer, tileNoteContainer } from './SudokuTile.module.css';
+import { tileContainer, tileNoteContainer, tileNumberContainer, tileText } from './SudokuTile.module.css';
 import { Settings, SettingsContext } from '@/providers/SettingsProvider';
 
 interface TileProps {
@@ -50,25 +50,26 @@ export const SudokuTile: React.FC<TileProps> = ({ tile, onSelected, highlight })
         <div
             className={tileContainer}
             style={{
-                gridRow: (tile.row % 3) + 1,
-                gridColumn: (tile.col % 3) + 1,
+                gridRow: `${tile.row + 1} / span 1`,
+                gridColumn: `${tile.col + 1} / span 1`,
                 '--background': getHighlight(settings, tile.valid, highlight),
                 color: tile.solid ? (settings.isDarkTheme ? '#fff' : '#000') : '#228',
             } as React.CSSProperties}
             onClick={() => onSelected()}
         >
             {tile.number ?
-                tile.number :
+                <div className={tileNumberContainer}>
+                    {tile.number}
+                </div> :
                 <div className={tileNoteContainer}>
                     {
                         tile.notes.map(v => {
                             return <div
                                 style={{
-                                    gridRow: Math.floor((v - 1) / 3) + 1,
-                                    gridColumn: ((v - 1) % 3) + 1,
+                                    gridRow: `${Math.floor((v - 1) / 3) + 1} / span 1`,
+                                    gridColumn: `${((v - 1) % 3) + 1} / span 1`,
                                     textAlign: 'center',
                                     overflow: 'hidden',
-                                    minWidth: 0,
                                 }}
                                 key={`tile-${tile.row}-${tile.col}-note-${v}`}
                             >

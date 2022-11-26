@@ -16,6 +16,8 @@ export type SudokuAction = {
     type: 'redo',
 } | {
     type: 'startTimer',
+} | {
+    type: 'clearMoves',
 };
 
 const buildPossibilityLookup = (): Record<number, number[]> => {
@@ -135,6 +137,14 @@ export const sudokuReducer = (state: Sudoku, action: SudokuAction): Sudoku => {
                 return prepareState(state);
             }
             return state;
+        }
+        case 'clearMoves': {
+            if (state.moves.length > 0) {
+                state = cloneSudoku(state);
+                state.moves = [];
+                state.moveIndex = 0;
+                return state;
+            }
         }
     };
 

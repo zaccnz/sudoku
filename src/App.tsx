@@ -18,7 +18,6 @@ const App: React.FC = () => {
   const settings = useContext(SettingsContext);
 
   const empty = sudoku.grid.map(row => row.filter(v => v.number !== undefined)).flat().length === 0;
-  console.log(sudoku.grid.map(row => row.filter(v => v.number !== undefined)).concat())
   const boardString = sudoku.grid.map(row => row.map(tile => tile.number ?? '0').join('')).join('');
 
   const onResize = () => {
@@ -37,6 +36,10 @@ const App: React.FC = () => {
       dispatch({
         type: 'solidify',
       });
+      dispatch({
+        type: 'clearMoves',
+      });
+      setSelected(undefined);
       if (settings.confetti) {
         setParticles(true);
       }

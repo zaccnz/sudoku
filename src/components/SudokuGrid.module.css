@@ -1,22 +1,30 @@
 .grid-container {
-    aspect-ratio: 1;
-    grid-area: board;
+    aspect-ratio: 1 / 1;
+    grid-area: board / board / board / board;
+}
 
-    border: 4px solid var(--border-colour);
+.grid-board {
+    width: 100%;
+    height: 100%;
+
+    outline: 4px solid var(--border-colour);
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(9, auto);
+    grid-template-rows: repeat(9, auto);
     user-select: none;
-    aspect-ratio: 1;
+}
+
+.grid-board:nth-child(3n+1) {
+    outline: 2px solid var(--border-colour);
 }
 
 .grid-box {
     grid-column-start: calc(var(--x)+1);
     grid-row-start: calc(var(--y) +1);
-    border: 1px solid var(--border-colour);
+    /*border: 1px solid var(--border-colour);*/
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(3, auto);
+    grid-template-rows: repeat(3, auto);
     aspect-ratio: 1;
 }

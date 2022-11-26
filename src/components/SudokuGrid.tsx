@@ -4,7 +4,7 @@ import React, { Dispatch, RefObject, SetStateAction, useEffect, useRef } from 'r
 import { SudokuTile } from './SudokuTile';
 
 /* @ts-ignore */
-import { gridContainer, gridBox } from './SudokuGrid.module.css';
+import { gridContainer, gridBox, gridBoard } from './SudokuGrid.module.css';
 
 interface SudokuGridProps {
     sudoku: Sudoku;
@@ -70,6 +70,12 @@ export const SudokuGrid: React.FC<SudokuGridProps> = ({ sudoku, dispatch, select
         }
     });
 
+    const boxSelect: boolean[][] = [[0, 1, 2], [3, 4, 5], [6, 7, 8]].map((v, i) => {
+        return v.map((_, j) => {
+            return selected !== undefined && Math.floor(selected[0] / 3) === i && Math.floor(selected[1] / 3) === j;
+        });
+    });
+
     const boxed: [Tile[], boolean][][] = [[0, 1, 2], [3, 4, 5], [6, 7, 8]].map((v, i) => {
         return v.map((_, j) => {
             return [new Array(9).fill(0).map((_, index) => {
@@ -83,48 +89,38 @@ export const SudokuGrid: React.FC<SudokuGridProps> = ({ sudoku, dispatch, select
             className={gridContainer}
             ref={containerRef}
         >
-            {
-                boxed.map((row, y) => {
-                    return row.map(([tiles, boxSelected], x) => {
-                        return (
-                            <div
-                                key={`box-${x}-${y}`}
-                                className={gridBox}
-                                style={{ "--x": x, "--y": y } as React.CSSProperties}
-                            >
-                                {
-                                    tiles.map(tile => {
-                                        let highlight: Highlight | undefined = undefined;
-                                        if (selected) {
-                                            const [sr, sc] = selected;
-                                            if (tile.row === sr && tile.col === sc) {
-                                                highlight = 'selected';
-                                            } else if (tile.number && tile.number === sudoku.grid[sr][sc].number) {
-                                                highlight = 'same';
-                                            } else if (boxSelected) {
-                                                highlight = 'connected';
-                                            } else if (tile.row === sr || tile.col === sc) {
-                                                highlight = 'connected';
-                                            }
-                                        }
-
-                                        return (
-                                            <SudokuTile
-                                                key={`tile-${tile.row}-${tile.col}`}
-                                                tile={tile}
-                                                highlight={highlight}
-                                                onSelected={() => {
-                                                    setSelected([tile.row, tile.col]);
-                                                }}
-                                            />
-                                        )
-                                    })
+            <div className={gridBoard}>
+                {
+                    sudoku.grid.map((row, y) => {
+                        return row.map((tile, x) => {
+                            let highlight: Highlight | undefined = undefined;
+                            if (selected) {
+                                const [sr, sc] = selected;
+                                if (tile.row === sr && tile.col === sc) {
+                                    highlight = 'selected';
+                                } else if (tile.number && tile.number === sudoku.grid[sr][sc].number) {
+                                    highlight = 'same';
+                                } else if (boxSelect[Math.floor(y / 3)][Math.floor(x / 3)]) {
+                                    highlight = 'connected';
+                                } else if (tile.row === sr || tile.col === sc) {
+                                    highlight = 'connected';
                                 }
-                            </div>
-                        )
+                            }
+
+                            return (
+                                <SudokuTile
+                                    key={`tile-${tile.row}-${tile.col}`}
+                                    tile={tile}
+                                    highlight={highlight}
+                                    onSelected={() => {
+                                        setSelected([tile.row, tile.col]);
+                                    }}
+                                />
+                            )
+                        })
                     })
-                })
-            }
+                }
+            </div>
         </div>
     );
 };

@@ -104,7 +104,7 @@ export const Settings: React.FC<SettingsProps> = ({ setSettingsOpen }) => {
                     <input
                         type='checkbox'
                         ref={darkThemeCheckbox}
-                        checked={settings.darkTheme}
+                        checked={settings.isDarkTheme}
                         disabled={settings.useSystemTheme}
                         onChange={() => updateSettings()}
                     />

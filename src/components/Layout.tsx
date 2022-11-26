@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { About } from './modal/About';
 /* @ts-ignore */
-import { container, footer, header, headerText, headerLinkActive, headerLinkInactive, headerLinkAnimate, main } from './Layout.module.css'
+import { container, footer, header, headerText, headerLinkActive, headerLinkInactive, headerLinkAnimate, main, mainContent } from './Layout.module.css'
 import { Settings } from './modal/Settings';
 import { Error } from './modal/Error';
 
@@ -41,7 +41,9 @@ export const Layout: React.FC<Props> = ({ page, boardString, children }) => {
                 </h1>
             </header>
             <main className={main}>
-                {children({ error, setError })}
+                <div className={mainContent}>
+                    {children({ error, setError })}
+                </div>
             </main>
             <footer className={footer}>
                 <p>zac, 2022</p>

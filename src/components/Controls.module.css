@@ -1,25 +1,97 @@
 .controls-container {
-    display: block;
+    display: grid;
+    grid-template-areas:
+        "generator clock"
+        "controls clock";
+    grid-template-columns: 200px auto;
     grid-area: controls;
+    align-self: flex-end;
+    gap: 10px;
 }
 
-.game-state-container {
-    display: flex;
-    gap: 4px;
-    align-content: center;
+.controls-container[page="solver"] {
+    grid-template-columns: auto;
+    grid-template-areas:
+        "generator controls";
 }
 
 .game-generator-text {
     margin: 0px;
 }
 
-.game-controls-container {
-    display: flex;
-    justify-content: space-evenly;
+.game-difficulty-selector {
+    flex-grow: 1;
+    background: var(--font-color);
+    border: 1px solid var(--border-colour);
+    color: var(--bg-color);
 }
 
-@media(min-width:1024px) {
+.game-generator-container {
+    display: flex;
+    gap: 4px;
+    align-content: center;
+    grid-area: generator;
+    justify-content: space-between;
+}
+
+.game-clock-container {
+    grid-area: clock;
+    justify-self: flex-end;
+    align-self: center;
+    font-size: 3em;
+    padding: 10px 0;
+}
+
+.game-controls-container {
+    display: flex;
+    grid-area: controls;
+    gap: 5px;
+    justify-content: space-between;
+}
+
+.controls-button {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    height: 30px;
+    background: var(--font-color);
+    border: 1px solid var(--border-colour);
+    color: var(--bg-color);
+    border-radius: 0;
+}
+
+.controls-button[disabled] {
+    background: var(--disabled-colour);
+    border: 1px solid var(--disabled-colour);
+    color: var(--font-color);
+}
+
+.controls-button[active='true'] {
+    background: var(--link-color);
+    border: 1px solid var(--link-color);
+}
+
+.controls-button:active {
+    background: var(--font-color);
+}
+
+@media(min-width:768px) {
     .controls-container {
-        align-self: flex-end;
+        grid-template-columns: auto;
+        grid-template-areas:
+            "clock"
+            "generator"
+            "controls";
+    }
+
+    .controls-container[page="solver"] {
+        grid-template-columns: auto;
+        grid-template-areas:
+            "generator"
+            "controls";
+    }
+
+    .game-clock-container {
+        justify-self: center;
     }
 }

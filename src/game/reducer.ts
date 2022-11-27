@@ -1,4 +1,4 @@
-import { cloneSudoku, createSudoku, Difficulty, findRemaining, Move, Sudoku, validateSudoku } from '@/game/sudoku';
+import { cloneSudoku, createSudoku, findRemaining, Move, Sudoku, validateSudoku } from '@/game/sudoku';
 
 export type SudokuAction = {
     type: 'createNew', numbers?: (number | undefined)[][],
@@ -16,6 +16,8 @@ export type SudokuAction = {
     type: 'redo',
 } | {
     type: 'startTimer',
+} | {
+    type: 'endTimer',
 } | {
     type: 'clearMoves',
 };
@@ -62,6 +64,18 @@ export const sudokuReducer = (state: Sudoku, action: SudokuAction): Sudoku => {
     switch (action.type) {
         case 'createNew': {
             return createSudoku(action.numbers);
+        }
+        case 'startTimer': {
+            state = cloneSudoku(state);
+            state.started = new Date();
+            return prepareState(state);
+        }
+        case 'endTimer': {
+            state = cloneSudoku(state);
+            if (state.finished === undefined) {
+                state.finished = new Date();
+            }
+            return prepareState(state);
         }
         case 'solidify': {
             state = cloneSudoku(state);
@@ -143,8 +157,8 @@ export const sudokuReducer = (state: Sudoku, action: SudokuAction): Sudoku => {
                 state = cloneSudoku(state);
                 state.moves = [];
                 state.moveIndex = 0;
-                return state;
             }
+            return state;
         }
     };
 

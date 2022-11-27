@@ -11,22 +11,32 @@ interface SudokuGridProps {
     dispatch: React.Dispatch<SudokuAction>,
     selected?: [number, number],
     setSelected: Dispatch<SetStateAction<[number, number] | undefined>>,
+    holdingShift?: boolean,
     setHoldingShift?: Dispatch<SetStateAction<boolean>>,
     numbersRef: RefObject<HTMLDivElement>,
 }
 
-export const SudokuGrid: React.FC<SudokuGridProps> = ({ sudoku, dispatch, selected, setSelected, setHoldingShift, numbersRef }) => {
+export const SudokuGrid: React.FC<SudokuGridProps> = ({ sudoku, dispatch, selected, setSelected, holdingShift, setHoldingShift, numbersRef }) => {
     const containerRef = useRef<HTMLDivElement>(null);
 
     const onKeyDown = (event: KeyboardEvent) => {
         if (selected) {
             if ('123456789'.indexOf(event.key) >= 0) {
-                dispatch({
-                    type: 'setNumber',
-                    number: parseInt(event.key),
-                    row: selected[0],
-                    col: selected[1],
-                });
+                if (holdingShift !== undefined && holdingShift) {
+                    dispatch({
+                        type: 'setNote',
+                        note: parseInt(event.key),
+                        row: selected[0],
+                        col: selected[1],
+                    });
+                } else {
+                    dispatch({
+                        type: 'setNumber',
+                        number: parseInt(event.key),
+                        row: selected[0],
+                        col: selected[1],
+                    });
+                }
             } else if ("!@#$%^&*(".indexOf(event.key) >= 0) {
                 dispatch({
                     type: 'setNote',
@@ -91,32 +101,44 @@ export const SudokuGrid: React.FC<SudokuGridProps> = ({ sudoku, dispatch, select
         >
             <div className={gridBoard}>
                 {
-                    sudoku.grid.map((row, y) => {
-                        return row.map((tile, x) => {
-                            let highlight: Highlight | undefined = undefined;
-                            if (selected) {
-                                const [sr, sc] = selected;
-                                if (tile.row === sr && tile.col === sc) {
-                                    highlight = 'selected';
-                                } else if (tile.number && tile.number === sudoku.grid[sr][sc].number) {
-                                    highlight = 'same';
-                                } else if (boxSelect[Math.floor(y / 3)][Math.floor(x / 3)]) {
-                                    highlight = 'connected';
-                                } else if (tile.row === sr || tile.col === sc) {
-                                    highlight = 'connected';
-                                }
-                            }
-
+                    boxed.map((row, y) => {
+                        return row.map(([tiles, boxSelected], x) => {
                             return (
-                                <SudokuTile
-                                    key={`tile-${tile.row}-${tile.col}`}
-                                    tile={tile}
-                                    highlight={highlight}
-                                    onSelected={() => {
-                                        setSelected([tile.row, tile.col]);
-                                    }}
-                                />
-                            )
+                                <div
+                                    key={`grid-box-${x}${y}`}
+                                    className={gridBox}
+                                    style={{ "--x": x, "--y": y } as React.CSSProperties}
+                                >
+                                    {
+                                        tiles.map((tile) => {
+                                            let highlight: Highlight | undefined = undefined;
+                                            if (selected) {
+                                                const [sr, sc] = selected;
+                                                if (tile.row === sr && tile.col === sc) {
+                                                    highlight = 'selected';
+                                                } else if (tile.number && tile.number === sudoku.grid[sr][sc].number) {
+                                                    highlight = 'same';
+                                                } else if (boxSelected) {
+                                                    highlight = 'connected';
+                                                } else if (tile.row === sr || tile.col === sc) {
+                                                    highlight = 'connected';
+                                                }
+                                            }
+
+                                            return (
+                                                <SudokuTile
+                                                    key={`tile-${tile.row}-${tile.col}`}
+                                                    tile={tile}
+                                                    highlight={highlight}
+                                                    onSelected={() => {
+                                                        setSelected([tile.row, tile.col]);
+                                                    }}
+                                                />
+                                            )
+                                        })
+                                    }
+                                </div>
+                            );
                         })
                     })
                 }

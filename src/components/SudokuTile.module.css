@@ -1,7 +1,8 @@
 .tile-container {
     display: block;
-    outline: 1px solid grey;
+    outline: 1px solid var(--border-small-colour);
     background: var(--background);
+    color: var(--colour);
     cursor: pointer;
     position: relative;
 }

@@ -11,7 +11,7 @@ import Confetti from 'react-confetti';
 const App: React.FC = () => {
   const [sudoku, dispatch] = useReducer(sudokuReducer, createSudoku());
   const [selected, setSelected] = useState<[number, number] | undefined>(undefined);
-  const [windowSize, setWindowSize] = useState([window.innerWidth, window.innerHeight]);
+  const windowSizeRef = useRef([window.innerWidth, window.innerHeight]);
   const numbersRef = useRef<HTMLDivElement>(null);
   const [note, setNote] = useState(false);
   const [particles, setParticles] = useState(false);
@@ -21,7 +21,7 @@ const App: React.FC = () => {
   const boardString = sudoku.grid.map(row => row.map(tile => tile.number ?? '0').join('')).join('');
 
   const onResize = () => {
-    setWindowSize([window.innerWidth, window.innerHeight]);
+    windowSizeRef.current = [window.innerWidth, window.innerHeight];
   };
 
   useEffect(() => {
@@ -35,6 +35,9 @@ const App: React.FC = () => {
     if (sudoku.complete) {
       dispatch({
         type: 'solidify',
+      });
+      dispatch({
+        type: 'endTimer',
       });
       dispatch({
         type: 'clearMoves',
@@ -68,6 +71,7 @@ const App: React.FC = () => {
                   selected={selected}
                   setSelected={setSelected}
                   setHoldingShift={setNote}
+                  holdingShift={note}
                   numbersRef={numbersRef}
                 />
                 <Numbers
@@ -81,8 +85,8 @@ const App: React.FC = () => {
                   particles && <Confetti
                     recycle={false}
                     style={{ overflow: 'none', width: '100%', height: '100%' }}
-                    width={windowSize[0]}
-                    height={windowSize[1]}
+                    width={windowSizeRef.current[0]}
+                    height={windowSizeRef.current[1]}
                     numberOfPieces={1000}
                     onConfettiComplete={() => {
                       setParticles(false);

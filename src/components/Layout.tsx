@@ -1,9 +1,9 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { About } from './modal/About';
-/* @ts-ignore */
-import { container, footer, header, headerText, headerLinkActive, headerLinkInactive, headerLinkAnimate, main, mainContent } from './Layout.module.css'
 import { Settings } from './modal/Settings';
 import { Error } from './modal/Error';
+/* @ts-ignore */
+import { container, footer, header, headerText, headerLinkActive, headerLinkInactive, headerLinkAnimate, main, mainContent } from './Layout.module.css'
 
 interface Props {
     page: 'index' | 'solver',

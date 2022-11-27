@@ -1,11 +1,15 @@
 import { SudokuAction } from '@/game/reducer';
 import { Difficulty, Sudoku } from '@/game/sudoku';
-import React, { Dispatch, SetStateAction, useRef, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { boardFromString, boardToString, WorkerInput, WorkerResult } from '@/game/worker';
 import SolveWorker from '@/game/worker?worker';
+import { ImUndo, ImRedo } from 'react-icons/im';
+import { BsFillPencilFill } from 'react-icons/bs';
+import { VscDebugStart } from 'react-icons/vsc';
 
 /* @ts-ignore */
-import { controlsContainer, gameStateContainer, gameControlsContainer, gameGeneratorText } from './Controls.module.css';
+import { controlsContainer, gameGeneratorContainer, gameControlsContainer, gameGeneratorText, gameClockContainer, controlsButton, gameDifficultySelector } from './Controls.module.css';
+import { IconType } from 'react-icons';
 
 const randomInterval = (from: number, to: number): number => {
     return Math.floor(Math.random() * (to - from + 1) + from);
@@ -15,26 +19,26 @@ type DifficultyEntry = { name: string, generate: () => number };
 
 const DIFFICULTIES: Record<Difficulty, DifficultyEntry> = {
     'easy': {
-        name: 'Easy',
+        name: 'Beginner',
         generate: () => randomInterval(10, 19),
     },
     'medium': {
-        name: 'Medium',
+        name: 'Easy',
         generate: () => randomInterval(20, 29),
     },
     'hard': {
-        name: 'Hard',
+        name: 'Medium',
         generate: () => randomInterval(30, 39),
     },
     'harder': {
-        name: 'Harder',
+        name: 'Hard',
         generate: () => randomInterval(40, 58),
     },
 };
 
 interface Button {
     text: string,
-    icon: any,
+    icon?: IconType,
     enabled: boolean,
     action: {
         type: 'toggle',
@@ -44,6 +48,45 @@ interface Button {
         type: 'click',
         onClick: () => void,
     }
+}
+
+// https://stackoverflow.com/questions/2998784/how-to-output-numbers-with-leading-zeros-in-javascript
+export const zeroPad = (num: number, places: number) => String(num).padStart(places, '0');
+
+interface GameClockProps {
+    started: Date;
+    finished?: Date,
+}
+
+const GameClock: React.FC<GameClockProps> = ({ started, finished }) => {
+    const [timerState, setTimerState] = useState({
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+    });
+
+    const updateTimer = () => {
+        const now = finished !== undefined ? finished : new Date();
+        const seconds = (now.getTime() - started.getTime()) / 1000;
+        setTimerState({
+            hours: Math.floor(seconds / (60 * 60)),
+            minutes: Math.floor(seconds / 60) % 60,
+            seconds: Math.floor(seconds % 60),
+        });
+    }
+
+    useEffect(() => {
+        updateTimer();
+        const updateInterval = setInterval(() => updateTimer(), 500);
+        return () => clearInterval(updateInterval);
+    }, [started, finished]);
+
+    return (
+        <div className={gameClockContainer}>
+            {timerState.hours > 0 && <span>{timerState.hours}:</span>}
+            {zeroPad(timerState.minutes, 2)}:{zeroPad(timerState.seconds, 2)}
+        </div>
+    )
 }
 
 interface ControlsProps {
@@ -72,6 +115,9 @@ export const Controls: React.FC<ControlsProps> = ({ sudoku, page, dispatch, sele
                     dispatch({
                         type: 'createNew',
                         numbers: boardFromString(result.board),
+                    });
+                    dispatch({
+                        type: 'startTimer',
                     });
                 }
                 return;
@@ -105,36 +151,36 @@ export const Controls: React.FC<ControlsProps> = ({ sudoku, page, dispatch, sele
     const buttons: Button[] = (page === 'index' ? [
         {
             text: 'Undo',
-            icon: undefined,
+            icon: ImUndo,
             enabled: sudoku.moveIndex > 0,
             action: {
                 type: 'click',
                 onClick: () => dispatch({ type: 'undo' }),
             }
-        },
+        } as Button,
         {
             text: 'Redo',
-            icon: undefined,
+            icon: ImRedo,
             enabled: sudoku.moveIndex < sudoku.moves.length,
             action: {
                 type: 'click',
                 onClick: () => dispatch({ type: 'redo' }),
             }
-        },
-        (note !== undefined && setNote) && {
+        } as Button,
+        {
             text: 'Note',
-            icon: undefined,
+            icon: BsFillPencilFill,
             enabled: true,
             action: {
                 type: 'toggle',
                 state: note,
                 setState: setNote,
             }
-        },
+        } as Button,
     ] : [
         {
             text: 'Solve',
-            icon: undefined,
+            icon: VscDebugStart,
             enabled: !solving,
             action: {
                 type: 'click',
@@ -152,7 +198,7 @@ export const Controls: React.FC<ControlsProps> = ({ sudoku, page, dispatch, sele
                     } as WorkerInput);
                 }
             }
-        },
+        } as Button,
         {
             text: 'Clear',
             icon: undefined,
@@ -165,16 +211,14 @@ export const Controls: React.FC<ControlsProps> = ({ sudoku, page, dispatch, sele
                     });
                 }
             }
-        },
-    ]).filter(v => typeof v !== 'boolean') as Button[];
+        } as Button,
+    ]);
 
     return (
-        <div className={controlsContainer}>
-            <div className={gameStateContainer}>
-                <p className={gameGeneratorText}>
-                    New Game
-                </p>
+        <div className={controlsContainer} {...{ page }}>
+            <div className={gameGeneratorContainer}>
                 <select
+                    className={gameDifficultySelector}
                     ref={difficultyRef}
                 >
                     {
@@ -186,6 +230,7 @@ export const Controls: React.FC<ControlsProps> = ({ sudoku, page, dispatch, sele
                     }
                 </select>
                 <button
+                    className={controlsButton}
                     onClick={() => {
                         setGenerating(true);
                         const entry = (DIFFICULTIES as Record<string, DifficultyEntry>)[difficultyRef.current?.value ?? 'easy'];
@@ -196,13 +241,14 @@ export const Controls: React.FC<ControlsProps> = ({ sudoku, page, dispatch, sele
                     }}
                     disabled={generating}
                 >
-                    generate
+                    New Board
                 </button>
             </div>
             <div className={gameControlsContainer}>
                 {
                     buttons.map((v, i) => {
                         return (<button
+                            className={controlsButton}
                             key={`controls-button-${i}`}
                             disabled={!v.enabled}
                             onClick={() => {
@@ -212,12 +258,28 @@ export const Controls: React.FC<ControlsProps> = ({ sudoku, page, dispatch, sele
                                     v.action.setState(state => !state);
                                 }
                             }}
+                            {
+                            ...{
+                                active: (v.action.type === 'toggle' && v.action.state).toString()
+                            }
+                            }
                         >
+                            {
+                                v.icon && <v.icon />
+                            }
                             {v.text}
                         </button>)
                     })
                 }
             </div>
+            {
+                page === 'index' && sudoku.started && (
+                    <GameClock
+                        started={sudoku.started}
+                        finished={sudoku.finished}
+                    />
+                )
+            }
         </div>
     );
 };

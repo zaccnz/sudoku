@@ -38,7 +38,8 @@ export interface Sudoku {
     moves: Move[];
     moveIndex: number;
     remaining: number[];
-    started: Date,
+    started?: Date,
+    finished?: Date,
 }
 
 export const cloneTile = (tile: SudokuTile): SudokuTile => {
@@ -96,7 +97,6 @@ export const createSudoku = (numbers?: (number | undefined)[][]): Sudoku => {
         moves: [],
         moveIndex: 0,
         remaining: findRemaining(grid),
-        started: new Date(),
     }
 };
 

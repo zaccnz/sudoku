@@ -13,7 +13,7 @@ interface TileProps {
 
 const highlightColors: Record<'light' | 'dark', Record<Highlight | 'none' | 'invalid' | 'invalid-selected', string>> = {
     'light': {
-        'none': '#fff',
+        'none': '#FFFBFF',
         'selected': '#73a4fa',
         'connected': '#aac7fa',
         'same': '#92b6f7',
@@ -21,14 +21,25 @@ const highlightColors: Record<'light' | 'dark', Record<Highlight | 'none' | 'inv
         'invalid-selected': '#f77474'
     },
     'dark': {
-        'none': '#000',
-        'selected': '#73a4fa',
-        'connected': '#aac7fa',
-        'same': '#92b6f7',
+        'none': '#1D1B1A',
+        'selected': '#2e4264',
+        'connected': '#232c3b',
+        'same': '#2d3b54',
         'invalid': '#fa9393',
         'invalid-selected': '#f77474'
     },
 }
+
+const textColours: Record<'light' | 'dark', Record<'solid' | 'editable', string>> = {
+    'light': {
+        'solid': '#1D1B1A',
+        'editable': '#228',
+    },
+    'dark': {
+        'solid': '#E8E1DF',
+        'editable': '#8e8ee8',
+    }
+};
 
 const getHighlight = (settings: Settings, valid: boolean, highlight?: Highlight): string => {
     const theme = settings.isDarkTheme ? 'dark' : 'light';
@@ -50,10 +61,10 @@ export const SudokuTile: React.FC<TileProps> = ({ tile, onSelected, highlight })
         <div
             className={tileContainer}
             style={{
-                gridRow: `${tile.row + 1} / span 1`,
-                gridColumn: `${tile.col + 1} / span 1`,
+                gridRow: `${tile.row % 3 + 1} / span 1`,
+                gridColumn: `${tile.col % 3 + 1} / span 1`,
                 '--background': getHighlight(settings, tile.valid, highlight),
-                color: tile.solid ? (settings.isDarkTheme ? '#fff' : '#000') : '#228',
+                '--colour': textColours[settings.isDarkTheme ? 'dark' : 'light'][tile.solid ? 'solid' : 'editable'],
             } as React.CSSProperties}
             onClick={() => onSelected()}
         >

@@ -1,30 +1,31 @@
 .numbers-container {
-    display: flex;
-    justify-content: space-evenly;
+    display: grid;
+    grid-template-columns: repeat(9, auto);
     grid-area: numbers;
-    overflow: hidden;
 }
 
 .number {
-    padding: 2.5vmin;
-    aspect-ratio: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 4vmin;
-    border: 1px solid var(--border-colour);
-    border-radius: 5px;
+    font-size: 2em;
+    padding: 0.2em;
+    cursor: pointer;
 }
 
 .number[disabled] {
-    background: grey;
+    background: var(--disabled-colour);
 }
 
-@media(min-width:1024px) {
+@media(min-width:768px) {
     .numbers-container {
         display: grid;
         grid-template-rows: 1fr 1fr 1fr;
         grid-template-columns: 1fr 1fr 1fr;
         align-self: start;
+    }
+
+    .number {
+        aspect-ratio: 1 / 1;
     }
 }

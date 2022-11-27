@@ -6,7 +6,6 @@ try it out at [zaccnz.github.io/sudoku](https://zaccnz.github.io/sudoku/)
 ### screenshots
 
 ![Game preview](screenshots/game.png)
-![Solver preview](screenshots/solver.mp4)
 
 ### getting start
 if you would like to host this application yourself...

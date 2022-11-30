@@ -1,34 +1,8 @@
-.settings-backdrop {
-    position: fixed;
-    top: 0%;
-    left: 0%;
-    width: 100%;
-    height: 100%;
-    backdrop-filter: blur(2px);
-}
-
-.settings-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 400px;
-    max-width: 85%;
-    border: 2px solid var(--border-colour);
-    padding: 10px;
-    background: var(--bg-color);
-}
-
 .settings-row {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: baseline;
-}
-
-.settings-title {
-    margin: 10px 0;
-    padding-bottom: 15px;
 }
 
 .settings-header {
@@ -39,14 +13,6 @@
 .settings-text {
     font-size: 1.2em;
     margin: 5px 0;
-}
-
-.settings-close {
-    user-select: none;
-    cursor: pointer;
-    margin: 0;
-    align-self: flex-start;
-    padding: 10px;
 }
 
 .settings-error {

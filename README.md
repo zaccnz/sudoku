@@ -22,6 +22,7 @@ npm run dev
 - multiple difficulty levels
 - undo and redo buttons
 - note potential values
+- PWA allows for offline use
 
 ### technologies
 
@@ -32,4 +33,8 @@ npm run dev
 - [react-icons](https://react-icons.github.io/react-icons/)
 - [gh-pages](https://github.com/tschaub/gh-pages)
 - [typescript-plugin-css-modules](https://github.com/mrmckeb/typescript-plugin-css-modules)
+- [vite-pwa](https://vite-pwa-org.netlify.app/)
 
+### resources
+
+- App Icon: Copyright 2020 Twitter, Inc and other contributors [twemoji](https://github.com/twitter/twemoji)

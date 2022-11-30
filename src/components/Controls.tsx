@@ -1,15 +1,16 @@
-import { SudokuAction } from '@/game/reducer';
-import { Difficulty, Sudoku } from '@/game/sudoku';
 import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import { boardFromString, boardToString, WorkerInput, WorkerResult } from '@/game/worker';
-import SolveWorker from '@/game/worker?worker';
+import { IconType } from 'react-icons';
 import { ImUndo, ImRedo } from 'react-icons/im';
 import { BsFillPencilFill } from 'react-icons/bs';
 import { VscDebugStart } from 'react-icons/vsc';
 
+import { SudokuAction } from '@/game/reducer';
+import { Difficulty, Sudoku } from '@/game/sudoku';
+import { boardFromString, boardToString, WorkerInput, WorkerResult } from '@/game/worker';
+import SolveWorker from '@/game/worker?worker';
+
 /* @ts-ignore */
 import { controlsContainer, gameGeneratorContainer, gameControlsContainer, gameGeneratorText, gameClockContainer, controlsButton, gameDifficultySelector } from './Controls.module.css';
-import { IconType } from 'react-icons';
 
 const randomInterval = (from: number, to: number): number => {
     return Math.floor(Math.random() * (to - from + 1) + from);

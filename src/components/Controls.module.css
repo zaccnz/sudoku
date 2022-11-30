@@ -24,6 +24,7 @@
     background: var(--font-color);
     border: 1px solid var(--border-colour);
     color: var(--bg-color);
+    border-radius: 0;
 }
 
 .game-generator-container {
@@ -31,7 +32,6 @@
     gap: 4px;
     align-content: center;
     grid-area: generator;
-    justify-content: space-between;
 }
 
 .game-clock-container {

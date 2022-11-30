@@ -1,14 +1,16 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { SettingsContext } from '@/providers/SettingsProvider';
+import { Modal } from './Modal';
 
 /* @ts-ignore */
-import { settingsBackdrop, settingsClose, settingsContainer, settingsError, settingsHeader, settingsRow, settingsText, settingsTitle } from './Settings.module.css';
+import { settingsError, settingsHeader, settingsRow, settingsText } from './Settings.module.css';
 
 interface SettingsProps {
+    settingsOpen: boolean,
     setSettingsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const Settings: React.FC<SettingsProps> = ({ setSettingsOpen }) => {
+export const Settings: React.FC<SettingsProps> = ({ settingsOpen, setSettingsOpen }) => {
     const settings = useContext(SettingsContext);
 
     const systemThemeCheckbox = useRef<HTMLInputElement>(null);
@@ -79,96 +81,88 @@ export const Settings: React.FC<SettingsProps> = ({ setSettingsOpen }) => {
     };
 
     return (
-        <div className={settingsBackdrop}>
-            <div className={settingsContainer}>
-                <div className={settingsRow}>
-                    <h1 className={settingsTitle}>⚙️ settings</h1>
-                    <div className={settingsClose} onClick={() => setSettingsOpen(false)}>
-                        x
-                    </div>
-                </div>
-                <h3 className={settingsHeader}>
-                    theme
-                </h3>
-                <div className={settingsRow}>
-                    <p className={settingsText}>use system theme</p>
-                    <input
-                        type='checkbox'
-                        ref={systemThemeCheckbox}
-                        checked={settings.useSystemTheme}
-                        onChange={() => updateSettings()}
-                    />
-                </div>
-                <div className={settingsRow}>
-                    <p className={settingsText}>dark theme</p>
-                    <input
-                        type='checkbox'
-                        ref={darkThemeCheckbox}
-                        checked={settings.isDarkTheme}
-                        disabled={settings.useSystemTheme}
-                        onChange={() => updateSettings()}
-                    />
-                </div>
-                <h3 className={settingsHeader}>
-                    game
-                </h3>
-                <div className={settingsRow}>
-                    <p className={settingsText}>confetti on win</p>
-                    <input
-                        type='checkbox'
-                        ref={confettiCheckbox}
-                        checked={settings.confetti}
-                        onChange={() => updateSettings()}
-                    />
-                </div>
-                <div className={settingsRow}>
-                    <p className={settingsText}>highlight connected tiles</p>
-                    <input
-                        type='checkbox'
-                        ref={highlightConnectedCheckbox}
-                        checked={settings.highlightConnected}
-                        onChange={() => updateSettings()}
-                    />
-                </div>
-                <div className={settingsRow}>
-                    <p className={settingsText}>highlight invalid tiles</p>
-                    <input
-                        type='checkbox'
-                        ref={highlightInvalidCheckbox}
-                        checked={settings.highlightInvalid}
-                        onChange={() => updateSettings()}
-                    />
-                </div>
-                <h3 className={settingsHeader}>
-                    solver
-                </h3>
-                <div className={settingsRow}>
-                    <p className={settingsText}>delay (ms)</p>
-                    <input
-                        type='number'
-                        value={forwardDelay}
-                        min={0}
-                        max={200}
-                        step={5}
-                        onChange={e => updateForwardDelay(parseInt(e.target.value))}
-                        style={{ width: '5em' }}
-                    />
-                </div>
-                {forwardDelayError !== '' && <p className={settingsError}>{forwardDelayError}</p>}
-                <div className={settingsRow}>
-                    <p className={settingsText}>backtrack delay (ms)</p>
-                    <input
-                        type='number'
-                        value={backDelay}
-                        min={0}
-                        max={200}
-                        step={5}
-                        onChange={e => updateBackDelay(parseInt(e.target.value))}
-                        style={{ width: '5em' }}
-                    />
-                </div>
-                {backDelayError !== '' && <p className={settingsError}>{backDelayError}</p>}
+        <Modal open={settingsOpen} setOpen={setSettingsOpen} title='⚙️ settings'>
+            <h3 className={settingsHeader}>
+                theme
+            </h3>
+            <div className={settingsRow}>
+                <p className={settingsText}>use system theme</p>
+                <input
+                    type='checkbox'
+                    ref={systemThemeCheckbox}
+                    checked={settings.useSystemTheme}
+                    onChange={() => updateSettings()}
+                />
             </div>
-        </div>
+            <div className={settingsRow}>
+                <p className={settingsText}>dark theme</p>
+                <input
+                    type='checkbox'
+                    ref={darkThemeCheckbox}
+                    checked={settings.isDarkTheme}
+                    disabled={settings.useSystemTheme}
+                    onChange={() => updateSettings()}
+                />
+            </div>
+            <h3 className={settingsHeader}>
+                game
+            </h3>
+            <div className={settingsRow}>
+                <p className={settingsText}>confetti on win</p>
+                <input
+                    type='checkbox'
+                    ref={confettiCheckbox}
+                    checked={settings.confetti}
+                    onChange={() => updateSettings()}
+                />
+            </div>
+            <div className={settingsRow}>
+                <p className={settingsText}>highlight connected tiles</p>
+                <input
+                    type='checkbox'
+                    ref={highlightConnectedCheckbox}
+                    checked={settings.highlightConnected}
+                    onChange={() => updateSettings()}
+                />
+            </div>
+            <div className={settingsRow}>
+                <p className={settingsText}>highlight invalid tiles</p>
+                <input
+                    type='checkbox'
+                    ref={highlightInvalidCheckbox}
+                    checked={settings.highlightInvalid}
+                    onChange={() => updateSettings()}
+                />
+            </div>
+            <h3 className={settingsHeader}>
+                solver
+            </h3>
+            <div className={settingsRow}>
+                <p className={settingsText}>delay (ms)</p>
+                <input
+                    type='number'
+                    value={forwardDelay}
+                    min={0}
+                    max={200}
+                    step={5}
+                    onChange={e => updateForwardDelay(parseInt(e.target.value))}
+                    style={{ width: '5em' }}
+                />
+            </div>
+            {forwardDelayError !== '' && <p className={settingsError}>{forwardDelayError}</p>}
+            <div className={settingsRow}>
+                <p className={settingsText}>backtrack delay (ms)</p>
+                <input
+                    type='number'
+                    value={backDelay}
+                    min={0}
+                    max={200}
+                    step={5}
+                    onChange={e => updateBackDelay(parseInt(e.target.value))}
+                    style={{ width: '5em' }}
+                />
+            </div>
+            {backDelayError !== '' && <p className={settingsError}>{backDelayError}</p>}
+        </Modal>
     )
 }

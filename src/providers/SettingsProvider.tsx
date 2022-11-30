@@ -80,7 +80,7 @@ interface SettingsProviderProps {
 
 export const SettingsProvider: React.FC<SettingsProviderProps> = (props) => {
     const [settings, setSettings] = useState<Settings>(InitialSettings);
-    const [systemDarkMode, setSystemDarkMode] = useState(false);
+    const [systemDarkMode, setSystemDarkMode] = useState(colourSchemeMediaQuery.matches);
 
     const updateBrowserTheme = (event: MediaQueryListEvent) => {
         setSystemDarkMode(event.matches);

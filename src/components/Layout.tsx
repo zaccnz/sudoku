@@ -55,9 +55,15 @@ export const Layout: React.FC<Props> = ({ page, boardString, children }) => {
                     <a href="https://github.com/zaccnz/sudoku/">source code</a>
                 </p>
             </footer>
-            {error.length > 0 && <Error error={error} setError={setError} />}
-            {settingsOpen && <Settings setSettingsOpen={setSettingsOpen} />}
-            {aboutOpen && <About setAboutOpen={setAboutOpen} />}
+            <Error
+                error={error}
+                setError={setError} />
+            <Settings
+                settingsOpen={settingsOpen}
+                setSettingsOpen={setSettingsOpen} />
+            <About
+                aboutOpen={aboutOpen}
+                setAboutOpen={setAboutOpen} />
         </div>
     )
 };

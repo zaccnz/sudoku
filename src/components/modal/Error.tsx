@@ -1,7 +1,8 @@
 import React, { Dispatch, SetStateAction } from 'react';
+import { Modal } from './Modal';
 
 /* @ts-ignore */
-import { errorClose, errorContainer, errorRow, errorText, errorTitle } from './Error.module.css';
+import { errorText } from './Error.module.css';
 
 interface ErrorProps {
     error: string,
@@ -9,16 +10,9 @@ interface ErrorProps {
 }
 
 export const Error: React.FC<ErrorProps> = ({ error, setError }) => {
-
     return (
-        <div className={errorContainer}>
-            <div className={errorRow}>
-                <h1 className={errorTitle}>⚠️ error</h1>
-                <div className={errorClose} onClick={() => setError('')}>
-                    x
-                </div>
-            </div>
+        <Modal open={error.length > 0} setOpen={(open) => open ? alert('error') : setError('')} title='⚠️ error'>
             <p className={errorText}>{error}</p>
-        </div>
+        </Modal>
     )
 }
